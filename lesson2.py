@@ -1,5 +1,7 @@
 import torch
 from torch.optim import SGD
+from torch.nn.modules import Module
+from torch.nn import Linear
 
 torch.manual_seed(42)
 
@@ -24,8 +26,17 @@ w_metadata = torch.rand((1, 3), requires_grad=True)   # Веса для стар
 # Смещение
 bias = torch.tensor([0.5], requires_grad=True)
 
-# Оптимизатор
-optimizer = SGD([w_technical, w_emotional, w_metadata, bias], lr=0.01)
+
+class ThreatScoreModel(Module):
+    def __init__(self):
+        super().__init__() # вызываем родительский класс
+        self.fully_connected_layer = Linear(2, 1) #fully_fc, указываем размерность 2 и выход 1
+
+    def forward(self, input):
+        self.fully_connected_layer(input)
+
+model = ThreatScoreModel()
+optimizer = SGD(model.parameters(), lr=0.01)
 
 # Функция предсказания
 def predict_likelihood(track_features: torch.Tensor) -> torch.Tensor:
