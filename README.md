@@ -1,1 +1,1 @@
-This repository at current moment consists of folders named by the number of classes. Each of the folders has either classwork code or homework in addition to it. Every needed comment is placed in the 'commit message' section. Please enjoy, I tried my best.
+This repository at current moment consists of folders named by the number of homeworks. Each of the folders has either classwork code or homework in addition to it. Every needed comment is placed in the 'commit message' section. Please enjoy, I tried my best.
