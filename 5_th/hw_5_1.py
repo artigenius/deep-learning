@@ -9,10 +9,10 @@ from torch.nn.utils.rnn import pad_sequence
 from collections import Counter
 import os
 
-# Установить устройство (CPU или GPU)
+# Установим устройство (CPU или GPU)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Загрузить датасет CoNLL2000
+# Загрузим датасет CoNLL2000
 def yield_tokens_and_tags(data_iter, tokenizer, tag_type="pos"):
     for sentence in data_iter:
         tokens, pos_tags, _ = zip(*sentence)
@@ -21,7 +21,7 @@ def yield_tokens_and_tags(data_iter, tokenizer, tag_type="pos"):
 
 tokenizer = get_tokenizer("basic_english")
 
-# Построить словари для токенов и POS-меток
+# Построим словари для токенов и POS-меток
 def build_vocab(data_iter, tokenizer, tag_type="pos"):
     token_vocab = Counter()
     tag_vocab = Counter()
@@ -30,7 +30,7 @@ def build_vocab(data_iter, tokenizer, tag_type="pos"):
         tag_vocab.update(tags)
     return build_vocab_from_iterator([token_vocab.keys()], specials=["<pad>", "<unk>"]), build_vocab_from_iterator([tag_vocab.keys()], specials=["<pad>"])
 
-# Определить класс датасета
+# Определим класс датасета
 class POSDataset(torch.utils.data.Dataset):
     def __init__(self, data_iter, token_vocab, tag_vocab, tokenizer, tag_type="pos"):
         self.samples = []
@@ -45,7 +45,7 @@ class POSDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         return self.samples[idx]
 
-# Определить функцию объединения (collate function)
+# Определим функцию объединения (collate function)
 def collate_fn(batch):
     tokens, tags = zip(*batch)
     tokens_padded = pad_sequence(tokens, batch_first=True, padding_value=token_vocab["<pad>"])
@@ -66,7 +66,7 @@ class LSTMPOSModel(nn.Module):
         logits = self.fc(lstm_out)
         return logits
 
-# Загрузить датасет и словари
+# Загрузим датасет и словари
 train_iter = CoNLL2000Chunking(split='train')
 token_vocab, tag_vocab = build_vocab(train_iter, tokenizer)
 
@@ -75,7 +75,7 @@ train_dataset = POSDataset(train_iter, token_vocab, tag_vocab, tokenizer)
 
 train_loader = DataLoader(train_dataset, batch_size=32, collate_fn=collate_fn, shuffle=True)
 
-# Инициализировать модель, функцию потерь и оптимизатор
+# Инициализируем модель, функцию потерь и оптимизатор
 model = LSTMPOSModel(len(token_vocab), len(tag_vocab)).to(device)
 criterion = nn.CrossEntropyLoss(ignore_index=tag_vocab["<pad>"])
 optimizer = torch.optim.Adam(model.parameters())
