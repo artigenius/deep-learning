@@ -55,6 +55,11 @@ train_split, test_split = torch.utils.data.random_split(dsb_data, [90, len(dsb_d
 train_seg_loader = DataLoader(train_split, batch_size=1, shuffle=True)
 test_seg_loader = DataLoader(test_split, batch_size=1)
 
+# Отладка размеров выборок
+print(f"Total dataset size: {len(dsb_data)}")
+print(f"Training set size: {len(train_split)}")
+print(f"Test set size: {len(test_split)}")
+
 class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
